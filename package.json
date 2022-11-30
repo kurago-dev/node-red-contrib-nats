@@ -1,13 +1,16 @@
 {
-  "name": "node-red-nats",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@kurago/node-red-contrib-nats",
+  "version": "0.0.1",
+  "description": "Node RED source and sink nodes for NATS",
+  "keywords": [
+    "node-red", "nats"
+  ],
   "scripts": {
     "clean": "rm -rf ./dist",
     "build": "npm run clean && tsc -p . && cp *.html ./dist/ && cp -r icons ./dist/"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Kurago",
+  "license": "MIT",
   "node-red": {
     "nodes": {
       "NATS in": "dist/nats-source.js",
@@ -15,6 +18,14 @@
       "NATS server": "dist/nats-server.js"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurago-dev/node-red-contrib-nats.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kurago-dev/node-red-contrib-nats/issues"
+  },
+  "homepage": "https://github.com/kurago-dev/node-red-contrib-nats#readme",
   "devDependencies": {
     "@types/node": "^18.11.9",
     "@types/node-red": "^1.2.1",
