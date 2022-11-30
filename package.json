@@ -1,6 +1,6 @@
 {
   "name": "@kurago-dev/node-red-contrib-nats",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Node RED source and sink nodes for NATS",
   "keywords": [
     "node-red", "nats"
