@@ -1,8 +1,8 @@
 import * as nodered from "node-red";
-import { NatsNodeDef } from "./nats-def";
+import { NatsSourceNodeDef } from "./nats-def";
 
 module.exports = (RED: nodered.NodeAPI): void => {
-  const NatsNode = function (this: nodered.Node, config: NatsNodeDef): void {
+  const NatsSourceNode = function (this: nodered.Node, config: NatsSourceNodeDef): void {
     RED.nodes.createNode(this, config);
 
     const _this = this;
@@ -17,5 +17,5 @@ module.exports = (RED: nodered.NodeAPI): void => {
       _this.send(message);
     });
   };
-  RED.nodes.registerType("NATS", NatsNode);
+  RED.nodes.registerType("NATS in", NatsSourceNode);
 };

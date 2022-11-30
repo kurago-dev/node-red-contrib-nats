@@ -4,13 +4,14 @@
   "description": "",
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc -p . && cp nats.html ./dist/ && cp -r icons ./dist/"
+    "build": "npm run clean && tsc -p . && cp *.html ./dist/ && cp -r icons ./dist/"
   },
   "author": "",
   "license": "ISC",
   "node-red": {
     "nodes": {
-      "NATS": "dist/nats.js"
+      "NATS in": "dist/nats-source.js",
+      "NATS out": "dist/nats-sink.js"
     }
   },
   "devDependencies": {

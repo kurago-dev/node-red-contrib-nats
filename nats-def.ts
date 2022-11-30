@@ -1,5 +1,9 @@
 import * as nodered from "node-red";
 
-export interface NatsNodeDef extends nodered.NodeDef {
+interface NatsNodeDef extends nodered.NodeDef {
   isLower: boolean;
 }
+
+export interface NatsSourceNodeDef extends NatsNodeDef {}
+
+export interface NatsSinkNodeDef extends NatsNodeDef {}
