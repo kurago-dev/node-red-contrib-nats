@@ -1,18 +1,91 @@
 import * as nodered from "node-red";
-import { connect, NatsConnection, StringCodec } from "nats";
+import { connect, NatsConnection, NatsError, StringCodec, Subscription } from "nats";
 
 import { NatsNode, NatsSourceNodeDef } from "./nats-def";
 
-const createConnection = async (_this: NatsNode, server: string): Promise<NatsConnection> => {
+type ConnectionAndSubscription = {
+  connection: NatsConnection;
+  subscription: Subscription;
+};
+
+const connectAndSubscribe = async (
+  _this: NatsNode,
+  config: NatsSourceNodeDef
+): Promise<ConnectionAndSubscription> => {
   const connection = await connect({
-    servers: [server],
+    servers: [config.server],
+    reconnect: false,
   });
   _this.status({
     fill: "green",
     shape: "ring",
     text: "connected",
   });
-  return connection;
+  connection.closed().then((e) => {
+    _this.status({
+      fill: "red",
+      shape: "dot",
+      text: "disconnected",
+    });
+    _this.error(e ?? "Connection closed unexpectedly");
+    setupConnection(_this, config);
+  });
+  if (_this.reconnectionInterval !== null) {
+    clearInterval(_this.reconnectionInterval);
+    _this.reconnectionInterval = null;
+  }
+
+  const subscription = connection.subscribe(config.topic);
+  _this.status({
+    fill: "green",
+    shape: "dot",
+    text: "subscribed",
+  });
+
+  const sc = StringCodec();
+  (async () => {
+    for await (const msg of subscription) {
+      _this.send({
+        payload: sc.decode(msg.data),
+      });
+    }
+    _this.status({
+      fill: "grey",
+      shape: "ring",
+      text: "unsubscribed",
+    });
+  })();
+
+  _this.on("close", async (done: () => void) => {
+    await connection.drain();
+    _this.status({
+      fill: "grey",
+      shape: "dot",
+      text: "gracefully drained",
+    });
+    done();
+  });
+
+  return { connection, subscription };
+};
+
+const setupConnection = async (_this: NatsNode, config: NatsSourceNodeDef): Promise<void> => {
+  try {
+    const { connection, subscription } = await connectAndSubscribe(_this, config);
+    _this.connection = connection;
+    _this.subscription = subscription;
+  } catch (e) {
+    if (e instanceof NatsError) {
+      _this.status({
+        fill: "red",
+        shape: "dot",
+        text: "disconnected",
+      });
+      _this.reconnectionInterval = setInterval(() => setupConnection(_this, config), 5000);
+    } else {
+      _this.error(e);
+    }
+  }
 };
 
 module.exports = (RED: nodered.NodeAPI): void => {
@@ -20,47 +93,14 @@ module.exports = (RED: nodered.NodeAPI): void => {
     RED.nodes.createNode(this, config);
 
     (async () => {
-      const _this = this;
-      this.connection = await createConnection(this, config.server);
-      this.connection.closed().then(async () => {
-        _this.status({
-          fill: "red",
-          shape: "dot",
-          text: "disconnected",
-        });
-        _this.connection = await createConnection(this, config.server);
-      });
-
-      _this.subscription = this.connection.subscribe(config.topic);
-      _this.status({
-        fill: "green",
+      this.status({
+        fill: "red",
         shape: "dot",
-        text: "subscribed",
+        text: "disconnected",
       });
+      this.reconnectionInterval = null;
 
-      const sc = StringCodec();
-      (async () => {
-        for await (const msg of this.subscription) {
-          _this.send({
-            payload: sc.decode(msg.data),
-          });
-        }
-        _this.status({
-          fill: "grey",
-          shape: "ring",
-          text: "unsubscribed",
-        });
-      })();
-
-      this.on("close", async (done: () => void) => {
-        await _this.connection.drain();
-        _this.status({
-          fill: "grey",
-          shape: "dot",
-          text: "gracefully drained",
-        });
-        done();
-      });
+      await setupConnection(this, config);
     })();
   };
   RED.nodes.registerType("NATS in", NatsSourceNode);

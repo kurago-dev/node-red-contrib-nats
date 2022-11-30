@@ -12,5 +12,6 @@ export interface NatsSinkNodeDef extends NatsNodeDef {}
 
 export interface NatsNode extends nodered.Node {
   connection: NatsConnection;
-  subscription: Subscription;
+  subscription: Subscription | null;
+  reconnectionInterval: NodeJS.Timer | null;
 }
