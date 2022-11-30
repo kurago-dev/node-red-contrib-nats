@@ -1,21 +1,32 @@
 <script type="text/javascript">    
-    RED.nodes.registerType("NATS out", {
-        category: "network",
-        color: "#45C7FF",
-        defaults: {
-            server: {
-                value: ""
-            },
-            topic: {
-                value: ""
-            }
+RED.nodes.registerType("NATS out", {
+    category: "network",
+    color: "#45C7FF",
+    defaults: {
+        server: {
+            value: ""
         },
-        inputs: 1,
-        outputs: 0,
-        align: "right",
-        icon: "nats-logo.png",
-        label: "NATS out"
-    });
+        topic: {
+            value: ""
+        }
+    },
+    inputs: 1,
+    outputs: 0,
+    align: "right",
+    icon: "nats-logo.png",
+    label: function() {
+        if (!!this.server && !!this.topic) {
+            return `${this.topic} @ ${this.server}`;
+        }
+        return "NATS in*";
+    },
+    labelStyle: function() {
+        if (!!this.server && !!this.topic) {
+            return "";
+        }
+        return "node_label_italic";
+    }
+});
 </script>
 
 <script type="text/html" data-template-name="NATS out">
@@ -30,5 +41,5 @@
 </script>
 
 <script type="text/html" data-help-name="NATS out">
-    <p>A simple node that converts the message payloads into all lower-case characters</p>
+    <p>Node that creates a connection to a NATS server and publishes all messages received in the specified topic(s)</p>
 </script>

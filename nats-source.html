@@ -13,7 +13,18 @@ RED.nodes.registerType("NATS in", {
     inputs: 0,
     outputs: 1,
     icon: "nats-logo.png",
-    label: "NATS in"
+    label: function() {
+        if (!!this.server && !!this.topic) {
+            return `${this.topic} @ ${this.server}`;
+        }
+        return "NATS in*";
+    },
+    labelStyle: function() {
+        if (!!this.server && !!this.topic) {
+            return "";
+        }
+        return "node_label_italic";
+    }
 });
 </script>
 
@@ -29,5 +40,5 @@ RED.nodes.registerType("NATS in", {
 </script>
 
 <script type="text/html" data-help-name="NATS in">
-    <p>Node that connects to a NATS server and serves as a sink for all messages received in the specified topic(s)</p>
+    <p>Node that connects to a NATS server and serves as a source for all messages received in the specified topic(s)</p>
 </script>
