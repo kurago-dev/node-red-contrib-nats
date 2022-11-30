@@ -1,7 +1,7 @@
 import * as nodered from "node-red";
 import { connect, NatsConnection, NatsError, StringCodec, Subscription } from "nats";
 
-import { NatsNode, NatsServerNode, NatsSourceNodeDef } from "./nats-def";
+import { NatsSourceNode, NatsServerNode, NatsSourceNodeDef } from "./nats-def";
 
 type ConnectionAndSubscription = {
   connection: NatsConnection;
@@ -10,7 +10,7 @@ type ConnectionAndSubscription = {
 
 const connectAndSubscribe = async (
   RED: nodered.NodeAPI,
-  _this: NatsNode,
+  _this: NatsSourceNode,
   config: NatsSourceNodeDef
 ): Promise<ConnectionAndSubscription> => {
   const server = RED.nodes.getNode(config.server) as NatsServerNode;
@@ -23,6 +23,8 @@ const connectAndSubscribe = async (
     shape: "ring",
     text: "connected",
   });
+  _this.retries = 0;
+
   connection.closed().then((e) => {
     _this.status({
       fill: "red",
@@ -34,9 +36,9 @@ const connectAndSubscribe = async (
       setupConnection(RED, _this, config);
     }
   });
-  if (_this.reconnectionInterval !== null) {
-    clearInterval(_this.reconnectionInterval);
-    _this.reconnectionInterval = null;
+  if (_this.reconnectionTimeout !== null) {
+    clearTimeout(_this.reconnectionTimeout);
+    _this.reconnectionTimeout = null;
   }
 
   const subscription = connection.subscribe(config.topic);
@@ -76,7 +78,7 @@ const connectAndSubscribe = async (
 
 const setupConnection = async (
   RED: nodered.NodeAPI,
-  _this: NatsNode,
+  _this: NatsSourceNode,
   config: NatsSourceNodeDef
 ): Promise<void> => {
   try {
@@ -86,11 +88,14 @@ const setupConnection = async (
   } catch (e) {
     if (e instanceof NatsError) {
       _this.status({
-        fill: "red",
+        fill: "yellow",
         shape: "dot",
-        text: "disconnected",
+        text:
+          _this.retries === 0 ? "reconnecting..." : `reconnecting... (${_this.retries} retries)`,
       });
-      _this.reconnectionInterval = setInterval(() => setupConnection(RED, _this, config), 5000);
+      _this.retries++;
+      const nextRetry = (_this.retries <= 6 ? 5 * _this.retries : 60) * 1000;
+      _this.reconnectionTimeout = setTimeout(() => setupConnection(RED, _this, config), nextRetry);
     } else {
       _this.error(e);
     }
@@ -98,7 +103,7 @@ const setupConnection = async (
 };
 
 module.exports = (RED: nodered.NodeAPI): void => {
-  const NatsSourceNode = function (this: NatsNode, config: NatsSourceNodeDef): void {
+  const NatsSourceNode = function (this: NatsSourceNode, config: NatsSourceNodeDef): void {
     RED.nodes.createNode(this, config);
 
     (async () => {
@@ -107,7 +112,8 @@ module.exports = (RED: nodered.NodeAPI): void => {
         shape: "dot",
         text: "disconnected",
       });
-      this.reconnectionInterval = null;
+      this.retries = 0;
+      this.reconnectionTimeout = null;
       this.isClosing = false;
 
       await setupConnection(RED, this, config);

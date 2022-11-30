@@ -1,9 +1,9 @@
 import { connect, StringCodec } from "nats";
 import * as nodered from "node-red";
-import { NatsNode, NatsServerNode, NatsSinkNodeDef } from "./nats-def";
+import { NatsSinkNode, NatsServerNode, NatsSinkNodeDef } from "./nats-def";
 
 module.exports = (RED: nodered.NodeAPI): void => {
-  const NatsSinkNode = function (this: NatsNode, config: NatsSinkNodeDef): void {
+  const NatsSinkNode = function (this: NatsSinkNode, config: NatsSinkNodeDef): void {
     RED.nodes.createNode(this, config);
 
     const _this = this;

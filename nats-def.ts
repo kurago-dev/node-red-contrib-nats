@@ -10,12 +10,18 @@ export interface NatsSourceNodeDef extends NatsNodeDef {}
 
 export interface NatsSinkNodeDef extends NatsNodeDef {}
 
-export interface NatsNode extends nodered.Node {
+interface NatsNode extends nodered.Node {
   connection: NatsConnection;
   subscription: Subscription | null;
-  reconnectionInterval: NodeJS.Timer | null;
-  isClosing: boolean;
 }
+
+export interface NatsSourceNode extends NatsNode {
+  reconnectionTimeout: NodeJS.Timer | null;
+  isClosing: boolean;
+  retries: number;
+}
+
+export interface NatsSinkNode extends NatsNode {}
 
 export interface NatsServerNode extends nodered.Node {
   host: string;
