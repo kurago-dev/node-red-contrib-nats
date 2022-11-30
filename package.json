@@ -11,7 +11,8 @@
   "node-red": {
     "nodes": {
       "NATS in": "dist/nats-source.js",
-      "NATS out": "dist/nats-sink.js"
+      "NATS out": "dist/nats-sink.js",
+      "NATS server": "dist/nats-server.js"
     }
   },
   "devDependencies": {

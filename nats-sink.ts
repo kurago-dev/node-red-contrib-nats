@@ -1,6 +1,6 @@
 import { connect, StringCodec } from "nats";
 import * as nodered from "node-red";
-import { NatsNode, NatsSinkNodeDef } from "./nats-def";
+import { NatsNode, NatsServerNode, NatsSinkNodeDef } from "./nats-def";
 
 module.exports = (RED: nodered.NodeAPI): void => {
   const NatsSinkNode = function (this: NatsNode, config: NatsSinkNodeDef): void {
@@ -9,8 +9,9 @@ module.exports = (RED: nodered.NodeAPI): void => {
     const _this = this;
     const sc = StringCodec();
     _this.on("input", async (msg, send, done) => {
+      const server = RED.nodes.getNode(config.server) as NatsServerNode;
       const connection = await connect({
-        servers: [config.server],
+        servers: [`${server.host}:${server.port}`],
         reconnect: false,
       });
       const { payload } = msg;

@@ -3,8 +3,12 @@ RED.nodes.registerType("NATS in", {
     category: "network",
     color: "#45C7FF",
     defaults: {
-        server: {
+        name: {
             value: ""
+        },
+        server: {
+            value: "",
+            type: "NATS server"
         },
         topic: {
             value: ""
@@ -14,8 +18,10 @@ RED.nodes.registerType("NATS in", {
     outputs: 1,
     icon: "nats-logo.png",
     label: function() {
-        if (!!this.server && !!this.topic) {
-            return `${this.topic} @ ${this.server}`;
+        if (!!this.name) {
+            return this.name;
+        } else if (!!this.topic) {
+            return this.topic;
         }
         return "NATS in*";
     },
@@ -30,11 +36,16 @@ RED.nodes.registerType("NATS in", {
 
 <script type="text/html" data-template-name="NATS in">
     <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" />
+    </div>
+    <hr />
+    <div class="form-row">
         <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
         <input type="text" id="node-input-server" />
     </div>
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-globe"></i> Topic</label>
+        <label for="node-input-topic"><i class="fa fa-paper-plane"></i> Topic</label>
         <input type="text" id="node-input-topic" />
     </div>
 </script>
