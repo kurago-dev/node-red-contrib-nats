@@ -27,8 +27,10 @@ const connectAndSubscribe = async (
       shape: "dot",
       text: "disconnected",
     });
-    _this.error(e ?? "Connection closed unexpectedly");
-    setupConnection(_this, config);
+    if (!_this.isClosing) {
+      _this.error(e ?? "Connection closed unexpectedly");
+      setupConnection(_this, config);
+    }
   });
   if (_this.reconnectionInterval !== null) {
     clearInterval(_this.reconnectionInterval);
@@ -57,7 +59,8 @@ const connectAndSubscribe = async (
   })();
 
   _this.on("close", async (done: () => void) => {
-    await connection.drain();
+    _this.isClosing = true;
+    await connection.close();
     _this.status({
       fill: "grey",
       shape: "dot",
@@ -99,6 +102,7 @@ module.exports = (RED: nodered.NodeAPI): void => {
         text: "disconnected",
       });
       this.reconnectionInterval = null;
+      this.isClosing = false;
 
       await setupConnection(this, config);
     })();

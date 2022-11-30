@@ -14,4 +14,5 @@ export interface NatsNode extends nodered.Node {
   connection: NatsConnection;
   subscription: Subscription | null;
   reconnectionInterval: NodeJS.Timer | null;
+  isClosing: boolean;
 }
