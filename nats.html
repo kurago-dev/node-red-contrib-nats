@@ -1,27 +1,26 @@
 <script type="text/javascript">
-RED.nodes.registerType("nats", {
+RED.nodes.registerType("NATS", {
     category: "function",
-    color: "#3389ff",
+    color: "#45C7FF",
     defaults: {
-        name: {
-            value: ""
+        isLower: {
+            value: true
         }
     },
     inputs: 1,
     outputs: 1,
-    label: function() {
-        return this.name || "nats";
-    }
+    icon: "nats-logo.png",
+    label: "NATS"
 });
 </script>
 
-<script type="text/html" data-template-name="nats">
+<script type="text/html" data-template-name="NATS">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-isLower"><i class="fa fa-thin fa-font"></i> To lower case?</label>
+        <input type="checkbox" id="node-input-isLower" />
     </div>
 </script>
 
-<script type="text/html" data-help-name="nats">
+<script type="text/html" data-help-name="NATS">
     <p>A simple node that converts the message payloads into all lower-case characters</p>
 </script>

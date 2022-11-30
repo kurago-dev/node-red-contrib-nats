@@ -7,12 +7,15 @@ module.exports = (RED: nodered.NodeAPI): void => {
 
     const _this = this;
     _this.on("input", async (msg, send, done) => {
+      const { payload } = msg;
       const message: nodered.NodeMessage = {
         ...msg,
-        payload: (msg.payload as string).toLowerCase(),
+        payload: config.isLower
+          ? (payload as string).toLowerCase()
+          : (payload as string).toUpperCase(),
       };
       _this.send(message);
     });
   };
-  RED.nodes.registerType("nats-node", NatsNode);
+  RED.nodes.registerType("NATS", NatsNode);
 };

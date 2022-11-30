@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc -p . && cp nats.html ./dist/",
-    "clean": "rm -rf ./dist"
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && tsc -p . && cp nats.html ./dist/ && cp -r icons ./dist/"
   },
   "author": "",
   "license": "ISC",
   "node-red": {
     "nodes": {
-      "nats": "dist/nats.js"
+      "NATS": "dist/nats.js"
     }
   },
   "devDependencies": {
