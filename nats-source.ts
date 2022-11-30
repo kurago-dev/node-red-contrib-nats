@@ -8,6 +8,30 @@ type ConnectionAndSubscription = {
   subscription: Subscription;
 };
 
+const updateDisconnectState = (_this: NatsSourceNode, config: NatsSourceNodeDef) => {
+  if (_this.isFirstConnection) {
+    _this.status({
+      fill: "red",
+      shape: "dot",
+      text: _this.retries === 0 ? "connecting..." : `connecting... (${_this.retries} retries)`,
+    });
+  } else {
+    _this.status({
+      fill: "yellow",
+      shape: "dot",
+      text: _this.retries === 0 ? "reconnecting..." : `reconnecting... (${_this.retries} retries)`,
+    });
+  }
+  _this.retries++;
+  if (_this.retries > config.maxRetries) {
+    _this.status({
+      fill: "red",
+      shape: "dot",
+      text: `disconnected (timed out after ${config.maxRetries} retries)`,
+    });
+  }
+};
+
 const connectAndSubscribe = async (
   RED: nodered.NodeAPI,
   _this: NatsSourceNode,
@@ -24,6 +48,7 @@ const connectAndSubscribe = async (
     text: "connected",
   });
   _this.retries = 0;
+  _this.isFirstConnection = false;
 
   connection.closed().then((e) => {
     _this.status({
@@ -88,19 +113,8 @@ const setupConnection = async (
     _this.subscription = subscription;
   } catch (e) {
     if (e instanceof NatsError) {
-      _this.status({
-        fill: "yellow",
-        shape: "dot",
-        text:
-          _this.retries === 0 ? "reconnecting..." : `reconnecting... (${_this.retries} retries)`,
-      });
-      _this.retries++;
+      updateDisconnectState(_this, config);
       if (_this.retries > config.maxRetries) {
-        _this.status({
-          fill: "red",
-          shape: "dot",
-          text: `disconnected (timed out after ${config.maxRetries} retries)`,
-        });
         _this.error("Max retries reached");
       } else {
         const nextRetry = (_this.retries <= 6 ? 5 * _this.retries : 60) * 1000;
@@ -128,6 +142,7 @@ module.exports = (RED: nodered.NodeAPI): void => {
       this.retries = 0;
       this.reconnectionTimeout = null;
       this.isClosing = false;
+      this.isFirstConnection = true;
 
       await setupConnection(RED, this, config);
     })();

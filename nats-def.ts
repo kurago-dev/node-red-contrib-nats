@@ -18,8 +18,9 @@ interface NatsNode extends nodered.Node {
 }
 
 export interface NatsSourceNode extends NatsNode {
-  reconnectionTimeout: NodeJS.Timer | null;
   isClosing: boolean;
+  isFirstConnection: boolean;
+  reconnectionTimeout: NodeJS.Timer | null;
   retries: number;
 }
 
