@@ -90,12 +90,14 @@ const connectAndSubscribe = async (
   _this.on("close", async (done: () => void) => {
     _this.isClosing = true;
     clearTimeout(_this.reconnectionTimeout);
-    await connection.drain();
-    _this.status({
-      fill: "grey",
-      shape: "dot",
-      text: "gracefully drained",
-    });
+    if (!connection.isClosed()) {
+      await connection.drain();
+      _this.status({
+        fill: "grey",
+        shape: "dot",
+        text: "gracefully drained",
+      });
+    }
     done();
   });
 
