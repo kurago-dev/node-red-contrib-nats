@@ -6,7 +6,9 @@ interface NatsNodeDef extends nodered.NodeDef {
   topic: string;
 }
 
-export interface NatsSourceNodeDef extends NatsNodeDef {}
+export interface NatsSourceNodeDef extends NatsNodeDef {
+  maxRetries: number;
+}
 
 export interface NatsSinkNodeDef extends NatsNodeDef {}
 

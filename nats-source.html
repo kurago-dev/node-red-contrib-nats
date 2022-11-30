@@ -12,6 +12,10 @@ RED.nodes.registerType("NATS in", {
         },
         topic: {
             value: ""
+        },
+        maxRetries: {
+            value: 30,
+            validate: RED.validators.number()
         }
     },
     inputs: 0,
@@ -47,6 +51,11 @@ RED.nodes.registerType("NATS in", {
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-paper-plane"></i> Topic</label>
         <input type="text" id="node-input-topic" />
+    </div>
+    <hr />
+    <div class="form-row">
+        <label for="node-input-maxRetries"><i class="fa fa-timer"></i> Max. retries</label>
+        <input type="number" id="node-input-maxRetries" />
     </div>
 </script>
 

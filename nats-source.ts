@@ -64,7 +64,8 @@ const connectAndSubscribe = async (
 
   _this.on("close", async (done: () => void) => {
     _this.isClosing = true;
-    await connection.close();
+    clearTimeout(_this.reconnectionTimeout);
+    await connection.drain();
     _this.status({
       fill: "grey",
       shape: "dot",
@@ -94,8 +95,20 @@ const setupConnection = async (
           _this.retries === 0 ? "reconnecting..." : `reconnecting... (${_this.retries} retries)`,
       });
       _this.retries++;
-      const nextRetry = (_this.retries <= 6 ? 5 * _this.retries : 60) * 1000;
-      _this.reconnectionTimeout = setTimeout(() => setupConnection(RED, _this, config), nextRetry);
+      if (_this.retries > config.maxRetries) {
+        _this.status({
+          fill: "red",
+          shape: "dot",
+          text: `disconnected (timed out after ${config.maxRetries} retries)`,
+        });
+        _this.error("Max retries reached");
+      } else {
+        const nextRetry = (_this.retries <= 6 ? 5 * _this.retries : 60) * 1000;
+        _this.reconnectionTimeout = setTimeout(
+          () => setupConnection(RED, _this, config),
+          nextRetry
+        );
+      }
     } else {
       _this.error(e);
     }
