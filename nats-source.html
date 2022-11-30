@@ -3,8 +3,11 @@ RED.nodes.registerType("NATS in", {
     category: "network",
     color: "#45C7FF",
     defaults: {
-        isLower: {
-            value: true
+        server: {
+            value: ""
+        },
+        topic: {
+            value: ""
         }
     },
     inputs: 0,
@@ -16,11 +19,15 @@ RED.nodes.registerType("NATS in", {
 
 <script type="text/html" data-template-name="NATS in">
     <div class="form-row">
-        <label for="node-input-isLower"><i class="fa fa-thin fa-font"></i> To lower case?</label>
-        <input type="checkbox" id="node-input-isLower" />
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-globe"></i> Topic</label>
+        <input type="text" id="node-input-topic" />
     </div>
 </script>
 
 <script type="text/html" data-help-name="NATS in">
-    <p>A simple node that converts the message payloads into all lower-case characters</p>
+    <p>Node that connects to a NATS server and serves as a sink for all messages received in the specified topic(s)</p>
 </script>

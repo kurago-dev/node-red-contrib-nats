@@ -3,8 +3,11 @@
         category: "network",
         color: "#45C7FF",
         defaults: {
-            isLower: {
-                value: true
+            server: {
+                value: ""
+            },
+            topic: {
+                value: ""
             }
         },
         inputs: 1,
@@ -17,8 +20,12 @@
 
 <script type="text/html" data-template-name="NATS out">
     <div class="form-row">
-        <label for="node-input-isLower"><i class="fa fa-thin fa-font"></i> To lower case?</label>
-        <input type="checkbox" id="node-input-isLower" />
+        <label for="node-input-server"><i class="fa fa-globe"></i> Server</label>
+        <input type="text" id="node-input-server" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-globe"></i> Topic</label>
+        <input type="text" id="node-input-topic" />
     </div>
 </script>
 
