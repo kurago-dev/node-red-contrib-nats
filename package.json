@@ -1,5 +1,5 @@
 {
-  "name": "@kurago/node-red-contrib-nats",
+  "name": "@kurago-dev/node-red-contrib-nats",
   "version": "0.0.1",
   "description": "Node RED source and sink nodes for NATS",
   "keywords": [
@@ -12,6 +12,7 @@
   "author": "Kurago",
   "license": "MIT",
   "node-red": {
+    "version": ">=3.0.0",
     "nodes": {
       "NATS in": "dist/nats-source.js",
       "NATS out": "dist/nats-sink.js",
@@ -34,5 +35,9 @@
   },
   "dependencies": {
     "nats": "^2.9.0"
+  },
+  "engines": {
+    "node": ">=16.0.0 <17.0.0",
+    "npm": ">=8.0.0 <9.0.0"
   }
 }

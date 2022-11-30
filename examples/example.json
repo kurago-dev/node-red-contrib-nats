@@ -1,0 +1,88 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e663101094906cf3",
+        "type": "NATS in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "server": "3c9b0887b575a14d",
+        "topic": "in1",
+        "maxRetries": 30,
+        "x": 410,
+        "y": 560,
+        "wires": [
+            [
+                "7f169d874ee429a3",
+                "df56e8f27abd29e0"
+            ]
+        ]
+    },
+    {
+        "id": "7f169d874ee429a3",
+        "type": "NATS out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "server": "3c9b0887b575a14d",
+        "topic": "out1",
+        "x": 590,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "bd0fb05fafba86ce",
+        "type": "NATS in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "server": "3c9b0887b575a14d",
+        "topic": "in2",
+        "maxRetries": 30,
+        "x": 410,
+        "y": 860,
+        "wires": [
+            [
+                "7f169d874ee429a3",
+                "930a9c779b9d55f3",
+                "df56e8f27abd29e0"
+            ]
+        ]
+    },
+    {
+        "id": "930a9c779b9d55f3",
+        "type": "NATS out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "server": "3c9b0887b575a14d",
+        "topic": "out2",
+        "x": 830,
+        "y": 860,
+        "wires": []
+    },
+    {
+        "id": "df56e8f27abd29e0",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "3c9b0887b575a14d",
+        "type": "NATS server",
+        "host": "nats",
+        "port": "4222"
+    }
+]
