@@ -1,13 +1,14 @@
 {
   "name": "@kurago-dev/node-red-contrib-nats",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Node RED source and sink nodes for NATS",
   "keywords": [
     "node-red", "nats"
   ],
   "scripts": {
     "clean": "rm -rf ./dist",
-    "build": "npm run clean && tsc -p . && cp *.html ./dist/ && cp -r icons ./dist/"
+    "build": "npm run clean && tsc -p . && cp *.html ./dist/ && cp -r icons ./dist/",
+    "prepack": "npm run build"
   },
   "author": "Kurago",
   "license": "MIT",
